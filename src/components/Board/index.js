@@ -22,7 +22,7 @@ const Lanes = styled.div`
 
 const DroppableBoard = withDroppable(Lanes)
 
-function Board ({
+function Board({
   children,
   onCardDragEnd,
   onLaneDragEnd,
@@ -39,11 +39,13 @@ function Board ({
   allowRemoveCard,
   onCardRemove,
   renderLaneAdder,
-  onCardNew
+  onCardNew,
+  addCardOn, // top|bottom
+  allowAddCard
 }) {
   const [board, setBoard] = useState(children)
 
-  function onDragEnd (event) {
+  function onDragEnd(event) {
     if (event.destination === null) return
 
     let source = { index: event.source.index }
@@ -61,21 +63,21 @@ function Board ({
     setBoard(reorderedBoard)
   }
 
-  async function addLane (lane) {
+  async function addLane(lane) {
     const lanes = renderLaneAdder ? addInArrayAtPosition(board.lanes, lane, board.lanes.length)
       : addInArrayAtPosition(board.lanes, await onLaneNew(lane), board.lanes.length)
 
     setBoard({ ...board, lanes })
   }
 
-  function removeLane (lane) {
+  function removeLane(lane) {
     const filteredLanes = board.lanes.filter(({ id }) => id !== lane.id)
     const filteredBoard = { ...board, lanes: filteredLanes }
     onLaneRemove(filteredBoard, lane)
     setBoard(filteredBoard)
   }
 
-  function renameLane (laneId, title) {
+  function renameLane(laneId, title) {
     const renamedLane = board.lanes.find(lane => lane.id === laneId)
     const renamedLanes = board.lanes.map(lane => lane.id === laneId ? { ...lane, title } : lane)
     const boardWithRenamedLane = { ...board, lanes: renamedLanes }
@@ -83,7 +85,7 @@ function Board ({
     setBoard(boardWithRenamedLane)
   }
 
-  function removeCard (lane, card) {
+  function removeCard(lane, card) {
     const filteredCards = lane.cards.filter(({ id }) => card.id !== id)
     const laneWithoutCard = { ...lane, cards: filteredCards }
     const filteredLanes = board.lanes.map(laneMap => lane.id === laneMap.id ? laneWithoutCard : laneMap)
@@ -92,12 +94,15 @@ function Board ({
     setBoard(boardWithoutCard)
   }
 
-  function addCard (lane, card, { on } = {}) {
-    const cards = addInArrayAtPosition(lane.cards, card, on === 'top' ? 0 : lane.cards.length)
+  function addCard(lane, card, { on } = {}) {
+    const cards = addInArrayAtPosition(lane.cards, onCardNew(card), on === 'top' ? 0 : lane.cards.length)
     const lanes = board.lanes.map(laneMap => lane.id === laneMap.id ? { ...laneMap, cards } : laneMap)
     const boardWithNewCard = { ...board, lanes }
-    onCardNew(boardWithNewCard, { ...lane, cards }, card)
     setBoard(boardWithNewCard)
+  }
+
+  function onCardAdd(lane, card) {
+    addCard(lane, card, { on: addCardOn })
   }
 
   return (
@@ -129,15 +134,17 @@ function Board ({
                   addCard: addCard.bind(null, lane)
                 })
               ) : (
-                <DefaultLaneHeader
-                  allowRemoveLane={allowRemoveLane}
-                  onLaneRemove={removeLane}
-                  allowRenameLane={allowRenameLane}
-                  onLaneRename={renameLane}
-                >
-                  {lane}
-                </DefaultLaneHeader>
-              )}
+                  <DefaultLaneHeader
+                    allowRemoveLane={allowRemoveLane}
+                    allowAddCard={allowAddCard}
+                    onCardAdd={onCardAdd}
+                    onLaneRemove={removeLane}
+                    allowRenameLane={allowRenameLane}
+                    onLaneRename={renameLane}
+                  >
+                    {lane}
+                  </DefaultLaneHeader>
+                )}
               disableLaneDrag={disableLaneDrag}
               disableCardDrag={disableCardDrag}
             >

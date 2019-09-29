@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import CursorPointer from '../CursorPointer'
+import CardAdder from '../CardAdder'
 
 const LaneHeaderSkeleton = styled.div`
   padding-bottom: 10px;
@@ -29,34 +30,34 @@ const Input = styled.input`
   }
 `
 
-function LaneTitle ({ allowRenameLane, onClick, children: title }) {
+function LaneTitle({ allowRenameLane, onClick, children: title }) {
   return allowRenameLane ? (
     <CursorPointer onClick={onClick}>
       {title}
     </CursorPointer>
   ) : (
-    <span>
-      {title}
-    </span>
-  )
+      <span>
+        {title}
+      </span>
+    )
 }
 
-function useRenameMode (state) {
+function useRenameMode(state) {
   const [renameMode, setRenameMode] = useState(state)
 
-  function toggleRenameMode () {
+  function toggleRenameMode() {
     setRenameMode(!renameMode)
   }
 
   return [renameMode, toggleRenameMode]
 }
 
-export default function ({ children: lane, allowRemoveLane, onLaneRemove, allowRenameLane, onLaneRename }) {
+export default function ({ children: lane, allowRemoveLane, onLaneRemove, allowRenameLane, onLaneRename, allowAddCard, onCardAdd }) {
   const [renameMode, toggleRenameMode] = useRenameMode(false)
   const [title, setTitle] = useState(lane.title)
   const [titleInput, setTitleInput] = useState('')
 
-  function handleRenameLane (event) {
+  function handleRenameLane(event) {
     event.preventDefault()
 
     onLaneRename(lane.id, titleInput)
@@ -64,9 +65,14 @@ export default function ({ children: lane, allowRemoveLane, onLaneRemove, allowR
     toggleRenameMode()
   }
 
-  function handleRenameMode () {
+  function handleRenameMode() {
     setTitleInput(title)
     toggleRenameMode()
+  }
+
+  function confirmCard({ title, description }) {
+    console.log(" title, description::", { title, description });
+    onCardAdd(lane, { title, description })
   }
 
   return (
@@ -82,13 +88,14 @@ export default function ({ children: lane, allowRemoveLane, onLaneRemove, allowR
           </span>
         </form>
       ) : (
-        <>
-          <LaneTitle allowRenameLane={allowRenameLane} onClick={handleRenameMode}>
-            {title}
-          </LaneTitle>
-          {allowRemoveLane && <span onClick={() => onLaneRemove(lane)}>×</span>}
-        </>
-      )}
+          <>
+            <LaneTitle allowRenameLane={allowRenameLane} onClick={handleRenameMode}>
+              {title}
+            </LaneTitle>
+            {allowRemoveLane && <span onClick={() => onLaneRemove(lane)}>×</span>}
+            {allowAddCard && <CardAdder onConfirm={confirmCard}>+</CardAdder>}
+          </>
+        )}
     </LaneHeaderSkeleton>
   )
 }

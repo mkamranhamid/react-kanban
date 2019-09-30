@@ -37,7 +37,7 @@ describe('<Board />', () => {
     ]
   }
 
-  function mount ({ children = board, ...otherProps } = {}) {
+  function mount({ children = board, ...otherProps } = {}) {
     subject = render(<Board {...otherProps}>{children}</Board>)
     return subject
   }

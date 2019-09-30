@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import CursorPointer from '../CursorPointer'
-import CardAdder from '../CardAdder'
+import CardAdder, { IconSpan } from '../CardAdder'
+
+const IconSpanRemove = styled(IconSpan)`
+`
 
 const LaneHeaderSkeleton = styled.div`
   padding-bottom: 10px;
@@ -92,8 +95,10 @@ export default function ({ children: lane, allowRemoveLane, onLaneRemove, allowR
             <LaneTitle allowRenameLane={allowRenameLane} onClick={handleRenameMode}>
               {title}
             </LaneTitle>
-            {allowRemoveLane && <span onClick={() => onLaneRemove(lane)}>×</span>}
-            {allowAddCard && <CardAdder onConfirm={confirmCard}>+</CardAdder>}
+            <span>
+              {allowRemoveLane && <IconSpanRemove onClick={() => onLaneRemove(lane)}>×</IconSpanRemove>}
+              {allowAddCard && <CardAdder onConfirm={confirmCard}>+</CardAdder>}
+            </span>
           </>
         )}
     </LaneHeaderSkeleton>

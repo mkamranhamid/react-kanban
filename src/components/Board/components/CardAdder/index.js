@@ -2,18 +2,17 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import CardForm from './components/CardForm'
 
-const CardAdderPlaceholder = styled.div`
-  border: 2px dashed #eee;
-  min-width: 230px;
-  height: 132px;
-  margin: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &:hover {
-    cursor: pointer;
-  }
+export const IconSpan = styled.span`
+    font-family: fantasy;
+    border: 1px dashed #eee;
+    display: inline-block;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    background: #fff;
+    margin: 0 5px;
 `
 
 function CardAdder({ onConfirm }) {
@@ -26,7 +25,7 @@ function CardAdder({ onConfirm }) {
 
     return isAddingCard
         ? <CardForm onConfirm={confirmCard} onCancel={() => setAddingCard(false)} />
-        : <span onClick={() => setAddingCard(true)}>+</span>
+        : <IconSpan onClick={() => setAddingCard(true)}>+</IconSpan>
 }
 
 export default CardAdder

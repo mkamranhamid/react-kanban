@@ -24,8 +24,8 @@ function CardForm({ onConfirm, onCancel }) {
     return (
         <StyledCardForm>
             <form onSubmit={addCard}>
-                <input type='text' placeholder="title" ref={inputCardTitle} autoFocus />
-                <input type='text' placeholder="description" ref={inputCardDescription} />
+                <input type='text' placeholder="title" ref={inputCardTitle} autoFocus required />
+                <input type='text' placeholder="description" ref={inputCardDescription} required />
                 <button type='submit'>Add</button>
                 <button type='button' onClick={onCancel}>Cancel</button>
             </form>

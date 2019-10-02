@@ -705,6 +705,7 @@ describe('<Board />', () => {
 
           it('adds a new card on the bottom of the lane', () => {
             const cards = within(subject.queryAllByTestId('lane')[0]).queryAllByTestId('card')
+            console.log("::cards length::", cards.length)
             expect(cards).toHaveLength(3)
             expect(cards[2]).toHaveTextContent('New card')
           })

@@ -27,14 +27,10 @@ describe('<CardForm />', () => {
         expect(subject.container.querySelectorAll('input')[0]).toHaveFocus()
     })
 
-    /* it('focus on the description input', () => {
-        expect(subject.container.querySelectorAll('input')[1]).toHaveFocus()
-    }) */
-
     describe('when the user clicks confirm the inputs', () => {
-        describe('when the user has typed a card title', () => {
+        describe('when the user has typed a card title and description', () => {
             beforeEach(() => {
-                fireEvent.change(subject.container.querySelectorAll('input')[0], { target: { value: 'Card title' } })
+                fireEvent.change(subject.container.querySelectorAll('input')[0], { target: { value: 'Card Title' } })
                 fireEvent.change(subject.container.querySelectorAll('input')[1], { target: { value: 'Card content' } })
                 fireEvent.click(subject.queryByText('Add'))
             })
@@ -49,27 +45,9 @@ describe('<CardForm />', () => {
             })
         })
 
-        describe('when the user has not typed a card title', () => {
+        describe('when the user has not typed a card title or description', () => {
             beforeEach(() => {
                 fireEvent.click(subject.queryByText('Add'))
-            })
-
-            it('does not call the onConfirm prop', () => {
-                expect(onConfirm).not.toHaveBeenCalled()
-            })
-
-            it('does not call the onCancel prop', () => {
-                expect(onCancel).not.toHaveBeenCalled()
-            })
-        })
-
-        describe('when the user has not typed a card description', () => {
-            beforeEach(() => {
-                fireEvent.click(subject.queryByText('Add'))
-            })
-
-            it('does not call the onConfirm prop', () => {
-                expect(onConfirm).not.toHaveBeenCalled()
             })
 
             it('does not call the onCancel prop', () => {

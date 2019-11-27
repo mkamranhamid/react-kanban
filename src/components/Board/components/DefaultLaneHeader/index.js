@@ -19,11 +19,13 @@ const LaneHeaderSkeleton = styled.div`
 
 const DefaultButton = styled.button`
   color: #333333;
-  background-color: #FFFFFF;
-  border-color: #CCCCCC;
+  background-color: #ffffff;
+  border-color: #cccccc;
 
-  :hover, :focus, :active {
-    background-color: #E6E6E6;
+  :hover,
+  :focus,
+  :active {
+    background-color: #e6e6e6;
   }
 `
 
@@ -34,15 +36,7 @@ const Input = styled.input`
 `
 
 function LaneTitle({ allowRenameLane, onClick, children: title }) {
-  return allowRenameLane ? (
-    <CursorPointer onClick={onClick}>
-      {title}
-    </CursorPointer>
-  ) : (
-      <span>
-        {title}
-      </span>
-    )
+  return allowRenameLane ? <CursorPointer onClick={onClick}>{title}</CursorPointer> : <span>{title}</span>
 }
 
 function useRenameMode(state) {
@@ -63,7 +57,7 @@ export default function ({ children: lane, allowRemoveLane, onLaneRemove, allowR
   function handleRenameLane(event) {
     event.preventDefault()
 
-    onLaneRename(lane.id, titleInput)
+    onLaneRename(lane, titleInput)
     setTitle(titleInput)
     toggleRenameMode()
   }
@@ -83,11 +77,18 @@ export default function ({ children: lane, allowRemoveLane, onLaneRemove, allowR
       {renameMode ? (
         <form onSubmit={handleRenameLane}>
           <span>
-            <Input type='text' value={titleInput} onChange={({ target: { value } }) => setTitleInput(value)} autoFocus />
+            <Input
+              type='text'
+              value={titleInput}
+              onChange={({ target: { value } }) => setTitleInput(value)}
+              autoFocus
+            />
           </span>
           <span>
             <DefaultButton type='submit'>Rename</DefaultButton>
-            <DefaultButton type='button' onClick={handleRenameMode}>Cancel</DefaultButton>
+            <DefaultButton type='button' onClick={handleRenameMode}>
+              Cancel
+            </DefaultButton>
           </span>
         </form>
       ) : (
@@ -96,7 +97,7 @@ export default function ({ children: lane, allowRemoveLane, onLaneRemove, allowR
               {title}
             </LaneTitle>
             <span>
-              {allowRemoveLane && <IconSpanRemove onClick={() => onLaneRemove(lane)}>×</IconSpanRemove>}
+              {allowRemoveLane && <span onClick={() => onLaneRemove(lane)}>×</span>}
               {allowAddCard && <CardAdder onConfirm={confirmCard}>+</CardAdder>}
             </span>
           </>

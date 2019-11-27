@@ -46,7 +46,7 @@ const board = {
           description: 'Add capability to add a card in a lane'
         },
       ]
-    }
+    },
     {
       id: 2,
       title: 'Doing',
@@ -61,51 +61,96 @@ const board = {
   ]
 }
 
-<Board>{board}</Board>
+<Board initialBoard={board} />
 ```
 
 ## 🔥 API
-### ⚙️ Props
 
-| Prop                                                            | Description                                                     |
-|-----------------------------------------------------------------|-----------------------------------------------------------------|
-| [`children`](#children) (required)                              | The board to render                                             |
-| [`onCardDragEnd`](#oncarddragend)                               | Callback that will be called when the card move ends            |
-| [`onLaneDragEnd`](#onlanedragend)                               | Callback that will be called when the lane move ends            |
-| [`renderCard`](#rendercard)                                     | A card to be rendered instead of the default card               |
-| [`renderLaneHeader`](#renderlaneheader)                         | A lane header to be rendered instead of the default lane header |
-| [`allowAddLane`](#allowaddlane)                                 | Allow a new lane be added by the user                           |
-| [`onLaneNew`](#onlanenew) (required if use the default lane adder template)  | Callback that will be called when a new lane is added through the default lane adder template           |
-| [`renderLaneAdder`](#renderlaneadder)                           | A lane adder to be rendered instead of the default lane adder template |
-| [`disableLaneDrag`](#disablelanedrag)                           | Disable the lane move                                           |
-| [`disableCardDrag`](#disablecarddrag)                           | Disable the card move                                           |
-| [`allowRemoveLane`](#allowremovelane)                           | Allow to remove a lane in default lane header                   |
-| [`onLaneRemove`](#onlaneremove) (required if `allowRemoveLane` or when [`removeLane`](#renderlaneheader) is called) | Callback that will be called when a lane is removed |
-| [`allowRenameLane`](#allowrenamelane)                           | Allow to rename a lane in default lane header                   |
-| [`onLaneRename`](#onlanerename) (required if `allowRenameLane` or when [`renameLane`](#renderlaneheader) is called) | Callback that will be called when a lane is renamed |
-| [`allowRemoveCard`](#allowremovecard)                           | Allow to remove a card in default card template                 |
-| [`onCardRemove`](#oncardremove) (required if `allowRemoveCard`) | Callback that will be called when a card is removed             |
-| [`onCardNew`](#oncardnew) (required if [`addCard`](#renderlaneheader) is called) | Callback that will be called when a new card is added |
+### 🕹 Controlled and Uncontrolled
 
-#### `children`
+When you need a better control over the board, you should stick with the controlled board.
+A controlled board means you need to deal with the board state yourself, you need to keep the state in your hands (component) and pass this state to the `<Board />`, we just reflect this state.
+This also means a little more of complexity, although we make available some helpers to deal with the board shape.
+You can read more in the React docs, [here](https://reactjs.org/docs/forms.html#controlled-components) and [here](https://reactjs.org/docs/uncontrolled-components.html).
+
+If you go with the controlled one, you need to pass your board through the `children` prop, otherwise you need to pass it through the `initialBoard` prop.
+
+#### Helpers to work with the controlled board
+
+We expose some APIs that you can import to help you to work with the controlled state. Those are the same APIs we use internally to manage the uncontrolled board. We really recommend you to use them, they are 100% unit tested and they don't do any side effect to your board state.
+
+To use them, you just need to import them together with your board:
 ```js
-const board = {
+import Board, { addCard, addLane, ... } from '@lourenci/react-kanban'
+```
+
+**All the helpers you need to pass your board and they will return a new board to pass to your state:**
+```js
+import Board, { addLane } from '@lourenci/react-kanban'
+...
+const [board, setBoard] = useState(initialBoard)
+...
+const newBoard = addLane(board, newLane)
+setBoard(newBoard)
+...
+<Board>{board}</Board>
+```
+
+[You can see the list of helpers in the end of the props documentation.](#-helpers-to-be-used-with-an-uncontrolled-board)
+
+### 🔷 Shape of a board
+
+```js
+{
   lanes: [{
     id: ${unique-required-laneId},
-    title: {$required-laneTitle},
+    title: {$required-laneTitle**},
     cards: [{
       id: ${unique-required-cardId},
-      title: ${required-cardTitle},
-      description: ${required-cardDescription}
+      title: ${required-cardTitle*}
+      description: ${required-description*}
     }]
   }]
 }
 ```
-These cards props are required to the card's default template, except the id that is required for your template too. See [`renderCard`](#rendercard).
 
-These lanes props are required to the lane's default template, except the id that is required for your template too. See [`renderLaneHeader`](#renderlaneheader).
+\* The `title` and the `description` are required if you are using the card's default template. You can render your own card template through the [`renderCard`](#rendercard) prop.
 
-#### `OnCardDragEnd`
+** The `title` is required if you are using the lane's default template. You can render your own lane template through the [`renderLaneHeader`](#renderlaneheader) prop.
+
+### ⚙️ Props
+
+| Prop | Description | Controlled | Uncontrolled |
+|-|-|-|-|
+| [`children`](#children) (required if controlled) | The board to render | ✅ | 🚫 |
+| [`initialBoard`](#initialboard) (required if uncontrolled) | The board to render | 🚫 | ✅ |
+| [`onCardDragEnd`](#oncarddragend) | Callback that will be called when the card move ends | ✅ | ✅ |
+| [`onLaneDragEnd`](#onlanedragend) | Callback that will be called when the lane move ends | ✅ | ✅ |
+| [`renderCard`](#rendercard)| A card to be rendered instead of the default card | ✅ | ✅ |
+| [`renderLaneHeader`](#renderlaneheader) | A lane header to be rendered instead of the default lane header | ✅ | ✅ |
+| [`allowAddLane`](#allowaddlane) | Allow a new lane be added by the user | ✅ | ✅ |
+| [`onNewLaneConfirm`](#onnewlaneconfirm) (required if use the default lane adder template)  | Callback that will be called when a new lane is confirmed by the user through the default lane adder template | ✅ | ✅ |
+| [`onLaneNew`](#onlanenew) (required if use the default lane adder template)  | Callback that will be called when a new lane is added through the default lane adder template | 🚫 | ✅ |
+| [`renderLaneAdder`](#renderlaneadder) | A lane adder to be rendered instead of the default lane adder template | ✅ | ✅ |
+| [`disableLaneDrag`](#disablelanedrag) | Disable the lane move | ✅ | ✅ |
+| [`disableCardDrag`](#disablecarddrag) | Disable the card move | ✅ | ✅ |
+| [`allowRemoveLane`](#allowremovelane) | Allow to remove a lane in default lane header | ✅ | ✅ |
+| [`onLaneRemove`](#onlaneremove) (required if `allowRemoveLane` or when [`removeLane`](#renderlaneheader) is called) | Callback that will be called when a lane is removed | ✅ | ✅ |
+| [`allowRenameLane`](#allowrenamelane) | Allow to rename a lane in default lane header | ✅ | ✅ |
+| [`onLaneRename`](#onlanerename) (required if `allowRenameLane` or when [`renameLane`](#renderlaneheader) is called) | Callback that will be called when a lane is renamed | ✅ | ✅ |
+| [`allowRemoveCard`](#allowremovecard) | Allow to remove a card in default card template | ✅ | ✅ |
+| [`onCardRemove`](#oncardremove) (required if `allowRemoveCard`) | Callback that will be called when a card is removed | ✅ | ✅ |
+| [`onCardNew`](#oncardnew) (required if [`addCard`](#renderlaneheader) is called) | Callback that will be called when a new card is added | 🚫 | ✅ |
+
+#### `children`
+
+The board. Use this prop if you want to control the board's state.
+
+#### `initialBoard`
+
+The board. Use this prop if you don't want to control the board's state.
+
+#### `onCardDragEnd`
 When the user moves a card, this callback will be called passing these parameters:
 
 | Arg          | Description                                            |
@@ -122,7 +167,7 @@ When the user moves a card, this callback will be called passing these parameter
 | `index` | **In source**: card's index in lane source's array; **In destination**: card's index in lane destination's array;|
 
 
-#### `OnLaneDragEnd`
+#### `onLaneDragEnd`
 When the user moves a lane, this callback will be called passing these parameters:
 
 | Arg          | Description                                            |
@@ -149,8 +194,10 @@ The function will receive these parameters:
 ##### `cardBag`
 | function     | Description                                            |
 |--------------|------------------------------------------------------- |
-| `removeCard` | Call this function to remove the card from the lane    |
+| `removeCard*` | Call this function to remove the card from the lane    |
 | `dragging`   | Whether the card is being dragged or not               |
+
+\* It's unavailable when the board is controlled.
 
 Ex.:
 ```js
@@ -190,13 +237,15 @@ The function will receive these parameters:
 ##### `laneBag`
 | function     | Description                                            |
 |--------------|------------------------------------------------------- |
-| `removeLane` | Call this function to remove the lane from the board   |
-| `renameLane` | Call this function with a title to rename the lane     |
-| `addCard`    | Call this function with a new card to add it in the lane |
+| `removeLane*` | Call this function to remove the lane from the board   |
+| `renameLane*` | Call this function with a title to rename the lane     |
+| `addCard*`    | Call this function with a new card to add it in the lane |
 
 **`addCard`**: As a second argument you can pass an option to define where in the lane you want to add the card:
 * `{ on: 'top' }`: to add on the top of the lane.
 * `{ on: 'bottom' }`: to add on the bottom of the lane (default).
+
+\* It's unavailable when the board is controlled.
 
 Ex.:
 ```js
@@ -230,10 +279,12 @@ const board = {
 #### `allowAddLane`
 Allow the user to add a new lane directly by the board.
 
-#### `onLaneNew`
-When the user adds a new lane through the default lane adder template, this callback will be called passing the lane title typed by the user.
+#### `onNewLaneConfirm`
+When the user confirms a new lane through the default lane adder template, this callback will be called with a draft of a lane with the title typed by the user.
 
-You **must** return the new lane with its new id in this callback.
+If your board is uncontrolled you **must** return the new lane with its new id in this callback.
+
+If your board is controlled use this to get the new lane title.
 
 Ex.:
 ```js
@@ -242,8 +293,13 @@ function onLaneNew (newLane) {
   return newLane
 }
 
-<Board allowAddLane onLaneNew={onLaneNew}>{board}</Board>
+<Board initialBoard={board} allowAddLane onLaneNew={onLaneNew} />
 ```
+
+#### `onLaneNew`
+When the user adds a new lane through the default lane adder template, this callback will be called passing the updated board and the new lane.
+
+This callback will not be called in an uncontrolled board.
 
 #### `renderLaneAdder`
 Use this if you want to render your own lane adder. You have to pass a function and return your lane adder component.
@@ -256,8 +312,9 @@ The function will receive these parameters:
 ##### `laneBag`
 | function     | Description                                            |
 |--------------|------------------------------------------------------- |
-| `addLane`    | Call this function with a new lane to add the new lane |
+| `addLane*`    | Call this function with a new lane to add the new lane |
 
+\* It's unavailable when the board is controlled.
 
 Ex.:
 ```js
@@ -315,6 +372,64 @@ When the user removes a card, this callback will be called passing these paramet
 | `board`      | The board without the removed lane                     |
 | `lane`       | The lane without the removed card                      |
 | `card`       | The removed card                                       |
+
+
+### 🔩 Helpers to be used with an uncontrolled board
+
+#### `moveLane`
+
+| Arg | Description                                                            |
+|-|-|
+| `board` | Your board |
+| `{ fromPosition }` | Index of lane to be moved |
+| `{ toPosition }` | Index destination of lane to be moved |
+
+#### `moveCard`
+
+| Arg | Description                                                            |
+|-|-|
+| `board` | Your board |
+| `{ fromPosition, fromLaneId }` | Index and laneId of card to be moved |
+| `{ toPosition, toLaneId }` | Index and laneId of the card destination  |
+
+#### `addLane`
+
+| Arg | Description                                                            |
+|-|-|
+| `board` | Your board |
+| `lane` | Lane to be added |
+
+#### `removeLane`
+
+| Arg | Description                                                            |
+|-|-|
+| `board` | Your board |
+| `lane` | Lane to be removed |
+
+#### `renameLane`
+
+| Arg | Description                                                            |
+|-|-|
+| `board` | Your board |
+| `lane` | Lane to be renamed |
+| `newtitle` | New title of the lane |
+
+#### `addCard`
+
+| Arg | Description                                                            |
+|-|-|
+| `board` | Your board |
+| `inLane` | Lane to add the card be added |
+| `card` | Card to be added |
+| `{ on: 'bottom|top' }` | Whether the card will be added on top or bottom of the lane (`bottom` is default) |
+
+#### `removeCard`
+
+| Arg | Description                                                            |
+|-|-|
+| `board` | Your board |
+| `fromLane` | Lane where the card is |
+| `card` | Card to be removed |
 
 ## 🧪 Tests
 

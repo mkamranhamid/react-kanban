@@ -179,6 +179,8 @@ function ControlledBoard({
   onCardRemove,
   disableCardDrag,
   disableLaneDrag
+  addCardOn, // top|bottom
+  allowAddCard,
 }) {
   function handleOnCardDragEnd({ source, destination }) {
     when(onCardDragEnd)(callback => callback(source, destination))
@@ -213,6 +215,9 @@ function ControlledBoard({
       onLaneRename={onLaneRename}
       disableLaneDrag={disableLaneDrag}
       disableCardDrag={disableCardDrag}
+      allowAddCard={allowAddCard}
+      addCardOn={addCardOn}
+      onCardAdd={handleCardAdd}
     >
       {board}
     </BoardContainer>

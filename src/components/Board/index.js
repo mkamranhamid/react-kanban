@@ -178,7 +178,7 @@ function ControlledBoard({
   allowRemoveCard,
   onCardRemove,
   disableCardDrag,
-  disableLaneDrag
+  disableLaneDrag,
   addCardOn, // top|bottom
   allowAddCard,
 }) {
